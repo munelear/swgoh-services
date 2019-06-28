@@ -82,7 +82,7 @@ const update = async () => {
             metadata.latestLocalizationBundleVersion = metadata.language;
         } else {
             if (clientVersion === '2.3.0') {
-                metadata = await fetch(client+"/pipe/metadata?nocon=true").then(res => res.json())
+                metadata = await fetch(client+"/pipe/metadata").then(res => res.json())
             } else {
                 metadata = await fetch(client+"/swapi/metadata?nocon=true").then(res => res.json())
             }
@@ -99,7 +99,7 @@ const update = async () => {
             await wait(throttle);
             let localization;
             if (clientVersion === '2.3.0') {
-                localization = await fetch(client+"/pipe/localization/"+metadata.latestLocalizationBundleVersion+"?nocon=true").then(res => res.text())
+                localization = await fetch(client+"/pipe/localization/"+metadata.latestLocalizationBundleVersion).then(res => res.text())
             } else {
                 localization = await fetch(client+"/swapi/localization/"+metadata.latestLocalizationBundleVersion+"?nocon=true").then(res => res.text())
             }
@@ -147,7 +147,7 @@ const update = async () => {
             if (!swapi) {
                 await wait(throttle);
                 if (clientVersion === '2.3.0') {
-                    gamedata = await fetch(client+"/pipe/gamedata/"+metadata.latestGamedataVersion+"?nocon=true").then(res => res.json())
+                    gamedata = await fetch(client+"/pipe/gamedata/"+metadata.latestGamedataVersion).then(res => res.json())
                 } else {
                     gamedata = await fetch(client+"/swapi/gamedata/"+metadata.latestGamedataVersion+"?nocon=true").then(res => res.json())
                 }

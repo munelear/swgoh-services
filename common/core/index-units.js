@@ -51,7 +51,7 @@ module.exports = async ( fs, debug ) => {
 
         // skip localization if not using the premium client
         if (!(user && pass)) {
-            units = await require('node-fetch')(`"http://localhost:${langPort}/lang/eng_us`, {
+            units = await require('node-fetch')(`http://localhost:${langPort}/lang/eng_us`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify( units )
