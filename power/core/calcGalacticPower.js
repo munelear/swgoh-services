@@ -42,12 +42,12 @@ function calcModGP( modList, raw ) {
         if( raw ) {
             modList.forEach( m => {
                 var key = m.definitionId.charAt(1)+":"+m.level+":"+m.tier+":"+m.definitionId.charAt(0);
-                gpMod += parseInt(gpTables.modTable.find(k => k.key === key).value);
+                gpMod += parseInt(gpTables.modTable[key]);
             });
         } else {
             modList.forEach( m => {
                 var key = m.pips+":"+m.level+":"+m.tier+":"+m.set;
-                gpMod += parseInt(gpTables.modTable.find(k => k.key === key).value);
+                gpMod += parseInt(gpTables.modTable[key]);
             });
         }
         return gpMod;
@@ -95,11 +95,8 @@ function getGearGp(tier) {
 
 function calcGearGP( tier, equipped ) {
     try {
-        var gpGear = 0;
-        for( var g = 1; g < tier; ++g ) {
-        	gpGear += Number(getGearGp(g)) * 6;
-        }
-        gpGear += Number(getGearGp(tier)) * equipped.length;
+        let gpGear = Number(gpTables.completedGearTable[tier-1]) +
+            Number(getGearGp(tier)) * equipped.length;
         return gpGear;
     } catch(e) {
         console.error(e);
