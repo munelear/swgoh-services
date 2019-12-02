@@ -119,11 +119,17 @@ function calcCharGP( unit ) {
         var gpGear      = calcGearGP( unit.gear, unit.equipped );
         var gpRarity    = gpTables.rarityTable[ unit.rarity ];
         var gpLevel     = gpTables.levelTable[ unit.level ];
+        var relicGp     = 0;
 
         if( debug ) console.log( gpMod, gpAbility, gpGear, gpRarity, gpLevel )
 
-        return Math.floor(( gpMod + gpAbility + gpGear + gpRarity + gpLevel ) * gpModifier);
+        if (unit.relic && unit.relic.currentTier > 2) {
+            const currentRelicTier = unit.relic.currentTier - 2;
+            relicGp = gpTables.gpPerRelicTable[ currentRelicTier ];
+            relicGp += unit.level * gpTables.gpModiferRelicTable[ currentRelicTier ];
+        }
 
+        return Math.floor(( gpMod + gpAbility + gpGear + gpRarity + gpLevel + relicGp) * gpModifier);
     } catch(e) {
         console.error(e);
         return 0
@@ -150,7 +156,7 @@ function calcShipGP( unit ) {
         var gpRarity    = parseFloat(gpTables.rarityTable[ unit.rarity ]);
         var gpCrewSize  = parseFloat(gpTables.crewSizeTable[unit.crew.length]);
         var gpLevel     = parseFloat(gpTables.levelTable[ unit.level ]);
-        var gpAbility   = parseFloat(calcAbilityGP( unit.skills ));
+        var gpAbility   = parseFloat(calcAbilityGP( unit.skills , unit.combatType));
         var gpModifier  = parseFloat(gpTables.multiplierTable[unit.rarity]);
 
         var gpCrewPower = 0;
@@ -158,12 +164,16 @@ function calcShipGP( unit ) {
         var gpCrew = 0;
 
         unit.crew.forEach( cmem => {
-        	gpCrewPower += parseFloat(cmem.cp);
-        	gpCrew += parseFloat(cmem.gp);
+            gpCrewPower += parseFloat(cmem.cp);
+            gpCrew += parseFloat(cmem.gp);
         });
 
         gpCrew = gpCrew * gpModifier * gpCrewSize;
         gpShipPower = (( gpCrew / 2 ) + (( gpLevel + gpAbility ) * 1.5));
+
+        // TODO - crewless ships
+        //const numOfAbilities = unit.skills.length;
+        //const gpPerAbilityModifier = gpTables.crewlessGPModiferPerAbilityTable[numOfAbilities];
 
         if( debug ) console.log( gpRarity, gpCrewSize, gpLevel, gpAbility, gpModifier, gpCrewPower, gpShipPower, gpCrew )
 

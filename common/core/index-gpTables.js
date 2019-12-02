@@ -87,6 +87,39 @@ module.exports = async ( fs, debug ) => {
         //REINFORCEMENT TABLES
         tables.reinforcementTable = [0].concat( overrides.filter(o => o.key.includes('reinforcement')).map(o => Number(o.value)) )
 
+        // GP MODIFIER FOR RELICS
+        tables.gpPerRelicTable = tableList.find(tl => tl.id === 'galactic_power_per_relic_tier').rowList.reduce((acc,i) => {
+            acc.push(Number(i.value))
+            return acc
+        },[0]);
+
+        tables.gpModiferRelicTable = tableList.find(tl => tl.id === 'galactic_power_modifier_per_relic_tier').rowList.reduce((acc,i) => {
+            acc.push(Number(i.value))
+            return acc
+        },[0]);
+
+        // CREWLESS SHIPS
+        tables.crewlessGPModiferPerAbilityTable = tableList.find(tl => tl.id === 'galactic_power_modifier_per_ability_crewless_ships').rowList.reduce((obj, item) => {
+            obj[item.key] = Number(item.value);
+            return obj;
+        }, {})
+
+        // CREWLESS RATING TABLE, NEEDED FOR STATS
+        tables.crewlessCrewRatingModiferPerAbilityTable = tableList.find(tl => tl.id === 'crew_rating_modifier_per_ability_crewless_ships').rowList.reduce((obj, item) => {
+            obj[item.key] = Number(item.value);
+            return obj;
+        }, {})
+
+        // CREW RATING RELIC TABLES, NEEDED FOR STATS
+        tables.crewRatingPerRelicTable = tableList.find(tl => tl.id === 'crew_rating_per_relic_tier').rowList.reduce((acc,i) => {
+            acc.push(Number(i.value))
+            return acc
+        },[0]);
+
+        tables.crewRatingModifierRelicTable = tableList.find(tl => tl.id === 'crew_rating_modifier_per_relic_tier').rowList.reduce((acc,i) => {
+            acc.push(Number(i.value))
+            return acc
+        },[0]);
 
         try {
             if( debug ) console.log("Saving /data/index_gpTables.json")

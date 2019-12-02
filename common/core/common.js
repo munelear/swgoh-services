@@ -13,7 +13,6 @@ const client = process.env.CLIENT || "http://localhost:3110"
 const throttle = process.env.THROTTLE || 500
 const user = process.env.USER || null
 const pass = process.env.PASS || null
-const clientVersion = process.env.VERSION || '2.4.0'
 
 const gameDataCollections = [
     "abilityList",
@@ -81,11 +80,7 @@ const update = async () => {
             metadata.latestGamedataVersion = metadata.game;
             metadata.latestLocalizationBundleVersion = metadata.language;
         } else {
-            if (clientVersion === '2.3.0') {
-                metadata = await fetch(client+"/pipe/metadata").then(res => res.json())
-            } else {
-                metadata = await fetch(client+"/swapi/metadata?nocon=true").then(res => res.json())
-            }
+            metadata = await fetch(client+"/swapi/metadata?nocon=true").then(res => res.json())
         }
 
         //Compare versions
@@ -97,12 +92,7 @@ const update = async () => {
         if( (!vl || force) && !swapi ) {
             if( debug ) console.log("Fetching new language bundle")
             await wait(throttle);
-            let localization;
-            if (clientVersion === '2.3.0') {
-                localization = await fetch(client+"/pipe/localization/"+metadata.latestLocalizationBundleVersion).then(res => res.text())
-            } else {
-                localization = await fetch(client+"/swapi/localization/"+metadata.latestLocalizationBundleVersion+"?nocon=true").then(res => res.text())
-            }
+            let localization = await fetch(client+"/swapi/localization/"+metadata.latestLocalizationBundleVersion+"?nocon=true").then(res => res.text())
 
             //Open the zip in memory
             let zipped = await (new JSZip()).loadAsync(localization, {base64:true});
@@ -146,11 +136,7 @@ const update = async () => {
             let gamedata
             if (!swapi) {
                 await wait(throttle);
-                if (clientVersion === '2.3.0') {
-                    gamedata = await fetch(client+"/pipe/gamedata/"+metadata.latestGamedataVersion).then(res => res.json())
-                } else {
-                    gamedata = await fetch(client+"/swapi/gamedata/"+metadata.latestGamedataVersion+"?nocon=true").then(res => res.json())
-                }
+                gamedata = await fetch(client+"/swapi/gamedata/"+metadata.latestGamedataVersion+"?nocon=true").then(res => res.json())
             } else {
                 gamedata = {};
                 for (let i = 0; i < gameDataCollections.length; i++) {
